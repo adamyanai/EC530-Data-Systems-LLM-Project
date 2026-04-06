@@ -100,6 +100,8 @@ Current tests cover:
 - append behavior for matching schemas
 - required auto-increment primary key creation
 - schema conflict logging
+- CLI behavior with mocked query-service and LLM dependencies
+- LLM adapter prompt/output handling with a mocked OpenAI client
 - a case where bad LLM-style SQL is rejected by the validator
 
 ## CI pipeline
@@ -114,4 +116,21 @@ AI was used as a development companion for design refinement and validator imple
 - the validator defines allowed behavior
 - unit tests are used to confirm and refine the implementation
 
-One documented failure case is the intentionally bad generated query `SELECT title FROM employees`, which is rejected by the validator because `title` does not exist in the schema.
+## Validator refinement
+
+One required part of the assignment was showing that the system remains correct when the LLM is wrong.
+
+The concrete failure case used in this project is:
+
+- natural-language request targets the `employees` table
+- LLM-generated SQL returns `SELECT title FROM employees`
+- the schema does not contain a `title` column
+
+This behavior is captured in the test suite, where the query service rejects that SQL before execution. The relevant test is [test_query_service.py](/EC530-Data-Systems-LLM-Project/test_query_service.py#L34).
+
+The refinement story is:
+
+- initial risk: an LLM can hallucinate a column that does not exist
+- test expectation: unknown columns must raise `ValidationError`
+- implementation refinement: the validator was tightened so it checks column references against the live schema, including columns used in `SELECT` and `WHERE` clauses
+- final behavior: incorrect LLM SQL is rejected safely and never reaches SQLite execution

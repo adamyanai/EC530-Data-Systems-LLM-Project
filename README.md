@@ -16,13 +16,9 @@ The project is split into independent components so each part can be tested in i
 
 ## Architecture
 
-Primary query flow:
+Primary query flow: CLI -> Query Service -> LLM Adapter -> Validator -> SQLite
 
-`CLI -> Query Service -> LLM Adapter -> Validator -> SQLite`
-
-Data ingestion flow:
-
-`CLI -> Data Loader -> Schema Manager -> SQLite`
+Data ingestion flow: CLI -> Data Loader -> Schema Manager -> SQLite
 
 ```mermaid
 flowchart LR
@@ -73,15 +69,6 @@ If you want to use the LLM path, set `OPENAI_API_KEY` in `.env`.
 - `sql <SELECT ...>` runs validated SQL directly.
 - `ask <natural language question>` sends the prompt to the LLM adapter, validates the returned SQL, and executes it.
 - `exit` quits the application.
-
-Example:
-
-```bash
-load test.csv employees
-schema
-sql SELECT name FROM employees
-ask show all employee names
-```
 
 ## Testing
 

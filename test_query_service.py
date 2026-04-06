@@ -24,7 +24,7 @@ def test_load_and_query_round_trip():
     load_csv(csv_path, "people")
     schema = build_schema()
     assert "people" in schema
-    assert set(schema["people"]) == {"name", "age"}
+    assert set(schema["people"]) == {"id", "name", "age"}
 
     rows = run_query("SELECT name FROM people WHERE age > 26")
     assert len(rows) == 1

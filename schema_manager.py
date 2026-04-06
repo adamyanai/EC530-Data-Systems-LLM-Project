@@ -1,8 +1,17 @@
 from __future__ import annotations
 
+import re
 from typing import Dict, List, Optional
 
 from db import get_connection
+
+VALID_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _ensure_valid_identifier(name: str) -> str:
+    if not VALID_NAME.match(name):
+        raise ValueError(f"Invalid identifier '{name}'.")
+    return name
 
 
 def get_tables(conn=None) -> List[str]:
@@ -18,6 +27,7 @@ def get_tables(conn=None) -> List[str]:
 
 def get_table_schema(table: str, conn=None) -> List[Dict[str, str]]:
     """Return list of columns with names and types for a single table."""
+    table = _ensure_valid_identifier(table)
     owned = conn is None
     conn = conn or get_connection()
     res = conn.execute(f"PRAGMA table_info({table})").fetchall()

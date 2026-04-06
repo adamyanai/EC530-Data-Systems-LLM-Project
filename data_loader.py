@@ -32,11 +32,27 @@ def _build_schema(df: pd.DataFrame) -> List[Tuple[str, str]]:
     return [(col, _infer_sql_type(df[col])) for col in df.columns]
 
 
+def _log_schema_conflict(table_name: str, existing, incoming) -> None:
+    with open("error_log.txt", "a", encoding="utf-8") as log_file:
+        log_file.write(
+            f"Schema conflict for table '{table_name}'. "
+            f"Existing schema={existing} Incoming schema={incoming}\n"
+        )
+
+
 def _schemas_match(existing: List[Dict[str, str]], incoming: List[Tuple[str, str]]) -> bool:
     """Compare existing schema (list of dicts) with incoming schema tuples."""
-    if len(existing) != len(incoming):
+    managed_columns = {"id"}
+    existing_user_columns = [
+        col for col in existing if col["name"].lower() not in managed_columns
+    ]
+
+    if len(existing_user_columns) != len(incoming):
         return False
-    existing_map = {col["name"].lower(): col["type"].upper() for col in existing}
+
+    existing_map = {
+        col["name"].lower(): col["type"].upper() for col in existing_user_columns
+    }
     for name, col_type in incoming:
         if existing_map.get(name.lower()) != col_type.upper():
             return False
@@ -60,6 +76,10 @@ def load_csv(file_path: str, table_name: str) -> Dict[str, str]:
     for col in df.columns:
         clean = _ensure_valid_identifier(str(col).strip(), "column")
         cleaned_columns.append(clean)
+
+    if len(cleaned_columns) != len(set(name.lower() for name in cleaned_columns)):
+        raise ValueError("CSV contains duplicate column names after normalization.")
+
     df.columns = cleaned_columns
 
     incoming_schema = _build_schema(df)
@@ -69,13 +89,18 @@ def load_csv(file_path: str, table_name: str) -> Dict[str, str]:
         existing_schema = get_table_schema(table_name, conn)
         if existing_schema:
             if not _schemas_match(existing_schema, incoming_schema):
+                _log_schema_conflict(table_name, existing_schema, incoming_schema)
                 raise ValueError(
                     f"Table '{table_name}' already exists with a different schema. "
                     "Choose a new table name or adjust your CSV."
                 )
         else:
             cols_sql = ", ".join(f"{name} {col_type}" for name, col_type in incoming_schema)
-            conn.execute(f"CREATE TABLE {table_name} ({cols_sql})")
+            conn.execute(
+                f"CREATE TABLE {table_name} ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                f"{cols_sql})"
+            )
 
         placeholders = ", ".join(["?"] * len(df.columns))
         insert_sql = f"INSERT INTO {table_name} ({', '.join(df.columns)}) VALUES ({placeholders})"

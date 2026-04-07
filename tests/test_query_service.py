@@ -3,9 +3,9 @@ import tempfile
 import pandas as pd
 import pytest
 
-from data_loader import load_csv
-from query_service import build_schema, run_query
-from validator import ValidationError
+from app.data_loader import load_csv
+from app.query_service import build_schema, run_query
+from app.validator import ValidationError
 
 
 @pytest.fixture(autouse=True)

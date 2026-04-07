@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import List
 
-from data_loader import load_csv
-from llm_adapter import nl_to_sql
-from query_service import build_schema, run_query
-from validator import ValidationError
+from app.data_loader import load_csv
+from app.llm_adapter import nl_to_sql
+from app.query_service import build_schema, run_query
+from app.validator import ValidationError
 
 
 def _print_rows(rows: List) -> None:

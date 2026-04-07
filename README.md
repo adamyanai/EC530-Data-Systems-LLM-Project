@@ -6,13 +6,14 @@ This project implements a modular SQLite-based data system that loads structured
 
 The project is split into independent components so each part can be tested in isolation:
 
-- `cli.py`: command-line interface. It never talks to SQLite directly.
-- `query_service.py`: service layer that coordinates schema lookup, SQL validation, and execution.
-- `llm_adapter.py`: converts natural-language questions into SQLite `SELECT` statements.
-- `validator.py`: validates SQL structure and schema references before execution.
-- `schema_manager.py`: discovers tables and columns and formats schema context for the LLM.
-- `data_loader.py`: reads CSV files, infers schema, creates tables, and appends compatible rows.
-- `db.py`: SQLite connection helper.
+- `src/app/cli.py`: command-line interface. It never talks to SQLite directly.
+- `src/app/query_service.py`: service layer that coordinates schema lookup, SQL validation, and execution.
+- `src/app/llm_adapter.py`: converts natural-language questions into SQLite `SELECT` statements.
+- `src/app/validator.py`: validates SQL structure and schema references before execution.
+- `src/app/schema_manager.py`: discovers tables and columns and formats schema context for the LLM.
+- `src/app/data_loader.py`: reads CSV files, infers schema, creates tables, and appends compatible rows.
+- `src/app/db.py`: SQLite connection helper.
+- `tests/`: isolated pytest suite for validators, loader, query flow, CLI, and LLM adapter.
 
 ## Architecture
 
@@ -57,7 +58,7 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-python cli.py
+PYTHONPATH=src python3 -m app.cli
 ```
 
 If you want to use the LLM path, set `OPENAI_API_KEY` in `.env`.
@@ -113,7 +114,7 @@ The concrete failure case used in this project is:
 - LLM-generated SQL returns `SELECT title FROM employees`
 - the schema does not contain a `title` column
 
-This behavior is captured in the test suite, where the query service rejects that SQL before execution. The relevant test is [test_query_service.py](/EC530-Data-Systems-LLM-Project/test_query_service.py#L34).
+This behavior is captured in the test suite, where the query service rejects that SQL before execution. The relevant test is [test_query_service.py](/EC530-Data-Systems-LLM-Project/tests/test_query_service.py#L34).
 
 The refinement story is:
 

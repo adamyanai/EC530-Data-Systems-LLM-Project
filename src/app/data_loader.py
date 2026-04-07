@@ -5,8 +5,8 @@ from typing import Dict, Iterable, List, Tuple
 
 import pandas as pd
 
-from db import get_connection
-from schema_manager import get_table_schema
+from app.db import get_connection
+from app.schema_manager import get_table_schema
 
 VALID_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 

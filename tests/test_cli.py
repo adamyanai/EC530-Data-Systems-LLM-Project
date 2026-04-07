@@ -1,4 +1,4 @@
-import cli
+from app import cli
 
 
 def test_cli_schema_command_prints_schema(monkeypatch, capsys):

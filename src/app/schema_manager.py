@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Dict, List, Optional
 
-from db import get_connection
+from app.db import get_connection
 
 VALID_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 

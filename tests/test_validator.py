@@ -1,6 +1,6 @@
 import pytest
 
-from validator import ValidationError, validate_sql
+from app.validator import ValidationError, validate_sql
 
 
 def test_valid_query():

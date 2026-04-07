@@ -1,12 +1,11 @@
 import tempfile
-from pathlib import Path
 
 import pandas as pd
 import pytest
 
-from data_loader import load_csv
-from db import get_connection
-from schema_manager import get_table_schema
+from app.data_loader import load_csv
+from app.db import get_connection
+from app.schema_manager import get_table_schema
 
 
 @pytest.fixture(autouse=True)

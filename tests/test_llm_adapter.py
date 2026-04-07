@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 import pytest
 
-import llm_adapter
+from app import llm_adapter
 
 
 class _FakeClient:

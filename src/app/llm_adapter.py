@@ -6,7 +6,7 @@ from typing import Dict, List
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from schema_manager import format_schema_text
+from app.schema_manager import format_schema_text
 
 load_dotenv()
 

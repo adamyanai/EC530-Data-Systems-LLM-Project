@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from db import get_connection
-from schema_manager import build_schema_map
-from validator import ValidationError, validate_sql
+from app.db import get_connection
+from app.schema_manager import build_schema_map
+from app.validator import ValidationError, validate_sql
 
 
 def build_schema() -> Dict[str, List[str]]:

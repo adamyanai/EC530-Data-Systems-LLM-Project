@@ -116,9 +116,9 @@ The concrete failure case used in this project is:
 
 This behavior is captured in the test suite, where the query service rejects that SQL before execution. The relevant test is [test_query_service.py](/EC530-Data-Systems-LLM-Project/tests/test_query_service.py#L34).
 
-The refinement story is:
-
-- initial risk: an LLM can hallucinate a column that does not exist
-- test expectation: unknown columns must raise `ValidationError`
-- implementation refinement: the validator was tightened so it checks column references against the live schema, including columns used in `SELECT` and `WHERE` clauses
 - final behavior: incorrect LLM SQL is rejected safely and never reaches SQLite execution
+
+
+## Project Video
+
+https://www.loom.com/share/d3eba96a141c4f5c86f4e4766edd69ba
